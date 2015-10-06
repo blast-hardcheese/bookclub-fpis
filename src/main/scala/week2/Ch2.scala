@@ -29,6 +29,10 @@ object Ch2 {
     (a, b) => f(a)(b)
   }
 
+  def compose[A, B, C](f: B => C, g: A => B): A => C = {
+    x => f(g(x))
+  }
+
   def main(args: Array[String]): Unit = {
     println(s"fib(1): ${fib(1)}")
     println(s"fib(2): ${fib(2)}")
@@ -42,5 +46,7 @@ object Ch2 {
 
     println(s"curry(1,2): ${curry[Int, Int, Int](_ + _)(1)(2)}")
     println(s"uncurry(1, 2): ${uncurry(curry[Int, Int, Int](_ + _))(1, 2)}")
+
+    println(s"compose(_+1, _.toString): ${compose[Int, Int, String](_.toString, _ + 1)(1)}")
   }
 }
