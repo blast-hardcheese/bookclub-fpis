@@ -12,11 +12,24 @@ object Ch2 {
     fst
   }
 
+  def isSorted[T](as: Array[T], ordered: (T, T) => Boolean): Boolean = {
+    @annotation.tailrec
+    def go(i: Int, res: Boolean): Boolean =
+      if (! res || (i + 1 >= as.length)) res
+      else go(i + 1, ordered(as(i), as(i+1)))
+
+    go(0, true)
+  }
+
   def main(args: Array[String]): Unit = {
     println(s"fib(1): ${fib(1)}")
     println(s"fib(2): ${fib(2)}")
     println(s"fib(3): ${fib(3)}")
     println(s"fib(4): ${fib(4)}")
     println(s"fib(5): ${fib(5)}")
+
+    println(s"isSorted: ${isSorted[Int](Array(1,2,3,4,5), _ < _)}")
+    println(s"isSorted: ${isSorted[Int](Array(1,3,2,4,5), _ < _)}")
+    println(s"isSorted: ${isSorted[Int](Array(0, 1, 4, 2, 3, 5), _ % 2 <= _ % 2)}")
   }
 }
