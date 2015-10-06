@@ -21,6 +21,10 @@ object Ch2 {
     go(0, true)
   }
 
+  def curry[A, B, C](f: (A, B) => C): A => (B => C) = {
+    a => b => f(a, b)
+  }
+
   def main(args: Array[String]): Unit = {
     println(s"fib(1): ${fib(1)}")
     println(s"fib(2): ${fib(2)}")
@@ -31,5 +35,8 @@ object Ch2 {
     println(s"isSorted: ${isSorted[Int](Array(1,2,3,4,5), _ < _)}")
     println(s"isSorted: ${isSorted[Int](Array(1,3,2,4,5), _ < _)}")
     println(s"isSorted: ${isSorted[Int](Array(0, 1, 4, 2, 3, 5), _ % 2 <= _ % 2)}")
+
+    println(s"curry(1,2): ${curry[Int, Int, Int](_ + _)(1)(2)}")
+
   }
 }
