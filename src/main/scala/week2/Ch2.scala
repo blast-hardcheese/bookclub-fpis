@@ -25,6 +25,10 @@ object Ch2 {
     a => b => f(a, b)
   }
 
+  def uncurry[A, B, C](f: A => B => C): (A, B) => C = {
+    (a, b) => f(a)(b)
+  }
+
   def main(args: Array[String]): Unit = {
     println(s"fib(1): ${fib(1)}")
     println(s"fib(2): ${fib(2)}")
@@ -37,6 +41,6 @@ object Ch2 {
     println(s"isSorted: ${isSorted[Int](Array(0, 1, 4, 2, 3, 5), _ % 2 <= _ % 2)}")
 
     println(s"curry(1,2): ${curry[Int, Int, Int](_ + _)(1)(2)}")
-
+    println(s"uncurry(1, 2): ${uncurry(curry[Int, Int, Int](_ + _))(1, 2)}")
   }
 }
