@@ -19,7 +19,7 @@ trait Option[+A] { self =>
 }
 
 object Option {
-  def apply[T](x: T): Option[T] = Some(x)
+  def apply[T](x: T): Option[T] = Some(x).filter(_ != null)
   def empty[T]: Option[T] = None
 }
 
