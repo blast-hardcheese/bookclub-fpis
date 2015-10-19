@@ -64,4 +64,10 @@ object Ch4Specification extends Properties("Ch4") {
       Ch4.sequence(xs.map(toOption).toList) == toOption(ScalaOption(xs.filter(_.nonEmpty).map(_.get).toList).filterNot(_ => xs.exists(_.isEmpty)))
     }
   }
+
+  property("5: sequence2") = {
+    forAll { xs: Seq[ScalaOption[Unit]] =>
+      Ch4.sequence2(xs.map(toOption).toList) == toOption(ScalaOption(xs.filter(_.nonEmpty).map(_.get).toList).filterNot(_ => xs.exists(_.isEmpty)))
+    }
+  }
 }

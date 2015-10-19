@@ -49,6 +49,20 @@ object Ch4 {
   }
 
   def sequence[A](a: List[Option[A]]): Option[List[A]] = {
-    a.foldLeft(Option(List.empty[A]))((a: Option[List[A]], x: Option[A]) => x.flatMap(x => a.map(_ :+ x)))
+    a.foldLeft(Option(List.empty[A])) { (acc: Option[List[A]], x: Option[A]) =>
+      acc flatMap { xs =>
+        x.map(xs :+ _)
+      }
+    }
   }
+
+  def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = {
+    a.foldLeft(Option(List.empty[B])) { (acc: Option[List[B]], x: A) =>
+      acc flatMap { xs =>
+        f(x) map { xs :+ _ }
+      }
+    }
+  }
+
+  def sequence2[A](a: List[Option[A]]): Option[List[A]] = traverse(a)(identity)
 }
