@@ -58,4 +58,10 @@ object Ch4Specification extends Properties("Ch4") {
       Ch4.map2(o1, o2)(_ + _) == toOption(_o1.flatMap(x => _o2.map(_ + x)))
     }
   }
+
+  property("4: sequence") = {
+    forAll { xs: Seq[ScalaOption[Unit]] =>
+      Ch4.sequence(xs.map(toOption).toList) == toOption(ScalaOption(xs.filter(_.nonEmpty).map(_.get).toList).filterNot(_ => xs.exists(_.isEmpty)))
+    }
+  }
 }

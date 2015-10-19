@@ -47,4 +47,8 @@ object Ch4 {
       y <- o2
     } yield f(x, y)
   }
+
+  def sequence[A](a: List[Option[A]]): Option[List[A]] = {
+    a.foldLeft(Option(List.empty[A]))((a: Option[List[A]], x: Option[A]) => x.flatMap(x => a.map(_ :+ x)))
+  }
 }
