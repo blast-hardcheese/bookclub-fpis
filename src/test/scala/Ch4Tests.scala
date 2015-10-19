@@ -70,4 +70,18 @@ object Ch4Specification extends Properties("Ch4") {
       Ch4.sequence2(xs.map(toOption).toList) == toOption(ScalaOption(xs.filter(_.nonEmpty).map(_.get).toList).filterNot(_ => xs.exists(_.isEmpty)))
     }
   }
+
+  property("6: Either.map") = {
+    forAll { (o2: String, o1: ScalaOption[Int]) =>
+      val e = o1.map(Right.apply _).getOrElse(Left(o2))
+
+      val e2 = e.map(_ * 3)
+
+      if (e2.isRight) {
+        e2 == Right(o1.get * 3)
+      } else {
+        e2 == Left(o2)
+      }
+    }
+  }
 }

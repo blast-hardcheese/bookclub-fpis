@@ -26,6 +26,32 @@ object Option {
 case object None extends Option[Nothing]
 case class Some[T](value: T) extends Option[T]
 
+sealed trait Either[+E, +A] { self =>
+  def map[B](f: A => B): Either[E, B] = flatMap(f andThen Right.apply _)
+  def flatMap[EE >: E, B](f: A => Either[EE, B]): Either[EE, B] = self match {
+    case Right(value) => f(value)
+    case Left(err) => Left(err)
+  }
+  def orElse[EE >: E,B >: A](b: => Either[EE, B]): Either[EE, B] = self match {
+    case Left(_) => b
+    case Right(value) => Right(value)
+  }
+
+  def map2[EE >: E, B, C](b: Either[EE, B])(f: (A, B) => C): Either[EE, C] = {
+    flatMap(o => b.map(i => f(o, i)))
+  }
+
+  def isRight: Boolean
+  def isLeft: Boolean = !isRight
+}
+
+case class Left[+E](value: E) extends Either[E, Nothing] {
+  def isRight = false
+}
+case class Right[+A](value: A) extends Either[Nothing, A] {
+  def isRight = true
+}
+
 object Ch4 {
   private[this] def calcMean(xs: Seq[Double]): Option[Double] = {
     if (xs.nonEmpty) {
