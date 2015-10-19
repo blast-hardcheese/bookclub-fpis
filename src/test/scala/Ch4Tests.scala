@@ -38,4 +38,16 @@ object Ch4Specification extends Properties("Ch4") {
       toOption(o).filter(_ % 3 == 0) == toOption(o.filter(_ % 3 == 0))
     }
   }
+
+  property("2: variance") = {
+    forAll { xs: Seq[Double] =>
+      val answer = if (xs.nonEmpty) {
+        val len = xs.length
+        val m = xs.sum / len
+        Some(xs.map(x => Math.pow(x - m, 2)).sum / len)
+      } else None
+
+      Ch4.variance(xs) == answer
+    }
+  }
 }

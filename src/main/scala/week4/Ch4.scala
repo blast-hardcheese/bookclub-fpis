@@ -22,4 +22,17 @@ case object None extends Option[Nothing]
 case class Some[T](value: T) extends Option[T]
 
 object Ch4 {
+  private[this] def calcMean(xs: Seq[Double]): Option[Double] = {
+    if (xs.nonEmpty) {
+      Some(xs.sum / xs.length)
+    } else {
+      None
+    }
+  }
+
+  def variance(xs: Seq[Double]): Option[Double] = {
+    val m = calcMean(xs)
+
+    m.map(m => xs.map(x => Math.pow(x - m, 2))).flatMap(calcMean)
+  }
 }
