@@ -18,6 +18,11 @@ trait Option[+A] { self =>
   def filter(f: A => Boolean): Option[A] = flatMap(x => if (f(x)) Some(x) else None)
 }
 
+object Option {
+  def apply[T](x: T): Option[T] = Some(x)
+  def empty[T]: Option[T] = None
+}
+
 case object None extends Option[Nothing]
 case class Some[T](value: T) extends Option[T]
 
