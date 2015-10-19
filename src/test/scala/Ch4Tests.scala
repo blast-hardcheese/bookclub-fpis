@@ -50,4 +50,12 @@ object Ch4Specification extends Properties("Ch4") {
       Ch4.variance(xs) == answer
     }
   }
+
+  property("3: map2") = {
+    forAll { (_o1: ScalaOption[Int], _o2: ScalaOption[Int]) =>
+      val o1 = toOption(_o1)
+      val o2 = toOption(_o2)
+      Ch4.map2(o1, o2)(_ + _) == toOption(_o1.flatMap(x => _o2.map(_ + x)))
+    }
+  }
 }

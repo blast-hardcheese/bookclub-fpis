@@ -35,4 +35,11 @@ object Ch4 {
 
     m.map(m => xs.map(x => Math.pow(x - m, 2))).flatMap(calcMean)
   }
+
+  def map2[A, B, C](o1: Option[A], o2: Option[B])(f: (A, B) => C): Option[C] = {
+    for {
+      x <- o1
+      y <- o2
+    } yield f(x, y)
+  }
 }
