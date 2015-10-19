@@ -52,6 +52,10 @@ case class Right[+A](value: A) extends Either[Nothing, A] {
   def isRight = true
 }
 
+case class Person(name: Name, age: Age)
+case class Name(val value: String)
+case class Age(val value: Int)
+
 object Ch4 {
   private[this] def calcMean(xs: Seq[Double]): Option[Double] = {
     if (xs.nonEmpty) {
@@ -99,5 +103,39 @@ object Ch4 {
         f(x).map(xs :+ _)
       }
     }
+  }
+
+  implicit class RichEither[L, R](e: Either[L, R]) {
+    def toAccumulator[R2](acc: R => R2): Either[List[L], R2] = e match {
+      case Left(value) => Left(List(value))
+      case Right(value) => Right(acc(value))
+    }
+  }
+
+  implicit class RichAccumulator[L, R, R2](e: Either[List[L], R => R2]) {
+    def chain(e2: Either[L, R]): Either[List[L], R2] = (e, e2) match {
+      case (Left(l1), Left(l2)) => Left(l1 :+ l2)
+      case (l1@Left(_), _) => l1
+      case (_, Left(l2)) => Left(List(l2))
+      case (Right(r1), Right(r2)) => Right(r1(r2))
+    }
+  }
+
+  def mkName(name: String): Either[String, Name] =
+    if (name == "" || name == null) Left("Name is empty.")
+    else Right(Name(name))
+
+  def mkAge(age: Int): Either[String, Age] =
+    if (age < 0) Left("Age is out of range.")
+    else Right(Age(age))
+
+  // Given example. How can we rewrite this to get many errors out?
+  def mkPerson(name: String, age: Int): Either[String, Person] =
+    mkName(name).map2(mkAge(age))(Person(_, _))
+
+  def mkPerson2(name: String, age: Int): Either[List[String], Person] = {
+    mkName(name)
+      .toAccumulator((Person(_, _)).curried)
+      .chain(mkAge(age))
   }
 }

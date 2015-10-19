@@ -94,4 +94,41 @@ object Ch4Specification extends Properties("Ch4") {
       Ch4.sequence3(es) == res
     }
   }
+
+  property("8: mkPerson") = {
+    forAll { (name: ScalaOption[String], dangerousAge: Int) =>
+      val dangerousName = name.getOrElse(null)
+
+      val nameRes = Ch4.mkName(dangerousName)
+      val ageRes = Ch4.mkAge(dangerousAge)
+
+      val errors: Either[List[String], Person] = (nameRes, ageRes) match {
+        case (Left(v1), Left(v2)) => Left(List(v1, v2))
+        case (Left(v1), _) => Left(List(v1))
+        case (_, Left(v2)) => Left(List(v2))
+        case (Right(name), Right(age)) => Right(Person(name, age))
+      }
+
+      Ch4.mkPerson2(dangerousName, dangerousAge) == errors
+    }
+  }
+
+  // 8: How would orElse, traverse, and sequence behave differently?
+  // Since all of these methods short-circuit in the case of failure,
+  // and since there's a possibility of applying a map which changes
+  // either Right or Left's type, the error collector is less flexible.
+  //
+  // Collecting by way of partially applied function works very well,
+  // but in order to flatMap to a different type for Left, we'd have to
+  // provide L => L2 to convert all the L's up to the new type, which
+  // would be a hassle.
+  //
+  // scala> (Left("first"): Either[String, Int]).toAccumulator(((_: Int) :: (_: Int) :: (_: Int) :: Nil).curried).chain(Left("Second")).chain(Left("Third"))
+  // res14: week4.Either[List[String],List[Int]] = Left(List(first, Second, Third))
+  //
+  // scala> (Left("first"): Either[String, Int]).toAccumulator(((_: Int) :: (_: Int) :: (_: Int) :: Nil).curried).chain(Right(5)).chain(Left("Third"))
+  // res15: week4.Either[List[String],List[Int]] = Left(List(first, Third))
+  //
+  // scala> (Right(1): Either[String, Int]).toAccumulator(((_: Int) :: (_: Int) :: (_: Int) :: Nil).curried).chain(Right(2)).chain(Right(3))
+  // res16: week4.Either[List[String],List[Int]] = Right(List(1, 2, 3))
 }
