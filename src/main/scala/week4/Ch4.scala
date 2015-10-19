@@ -91,4 +91,13 @@ object Ch4 {
   }
 
   def sequence2[A](a: List[Option[A]]): Option[List[A]] = traverse(a)(identity)
+
+  def sequence3[E, A](es: List[Either[E, A]]): Either[E, List[A]] = traverse2(es)(identity)
+  def traverse2[E, A, B](as: List[A])(f: A => Either[E, B]): Either[E, List[B]] = {
+    as.foldLeft[Either[E, List[B]]](Right(List.empty[B])) { (acc, x) =>
+      acc flatMap { xs =>
+        f(x).map(xs :+ _)
+      }
+    }
+  }
 }

@@ -1,6 +1,7 @@
 package week4
 
 import scala.{ Option => ScalaOption, Some => ScalaSome, None => ScalaNone }
+import scala.{ Either => ScalaEither, Left => ScalaLeft, Right => ScalaRight }
 
 import org.scalacheck.Properties
 import org.scalacheck.Prop._
@@ -82,6 +83,15 @@ object Ch4Specification extends Properties("Ch4") {
       } else {
         e2 == Left(o2)
       }
+    }
+  }
+
+  property("7: sequence3") = {
+    forAll { (xs: List[ScalaEither[String, Int]]) =>
+      val res: Either[String, List[Int]] = Right(xs).flatMap { xs => xs.find(_.isLeft).map(x => Left(x.left.get)).getOrElse(Right(xs.map(x => x.right.get))) }
+      val es = xs.map(_.fold(Left.apply _, Right.apply _))
+
+      Ch4.sequence3(es) == res
     }
   }
 }
